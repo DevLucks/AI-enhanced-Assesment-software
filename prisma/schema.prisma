@@ -1,0 +1,213 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  LECTURER
+  STUDENT
+}
+
+enum AssessmentStatus {
+  DRAFT
+  PUBLISHED
+  ACTIVE
+  CLOSED
+}
+
+enum QuestionType {
+  OBJECTIVE
+  SUBJECTIVE
+}
+
+enum SubmissionStatus {
+  IN_PROGRESS
+  SUBMITTED
+}
+
+model User {
+  id           String  @id @default(cuid())
+  name         String
+  email        String  @unique
+  password     String
+  role         Role
+  matricNumber String? @unique
+  staffId      String? @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  department   Department? @relation(fields: [departmentId], references: [id])
+  departmentId String?
+
+  taughtCourses      Course[]      @relation("CourseLecturer")
+  createdAssessments Assessment[]
+  enrolledCourses    Course[]      @relation("CourseStudents")
+  submissions        Submission[]
+
+  accounts Account[]
+  sessions Session[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Department {
+  id        String   @id @default(cuid())
+  name      String
+  code      String   @unique
+  createdAt DateTime @default(now())
+
+  users   User[]
+  courses Course[]
+}
+
+model Course {
+  id        String   @id @default(cuid())
+  name      String
+  code      String   @unique
+  createdAt DateTime @default(now())
+
+  department   Department @relation(fields: [departmentId], references: [id])
+  departmentId String
+
+  lecturers   User[]       @relation("CourseLecturer")
+  students    User[]       @relation("CourseStudents")
+  assessments Assessment[]
+}
+
+model Assessment {
+  id          String           @id @default(cuid())
+  title       String
+  description String?
+  duration    Int
+  totalMarks  Int
+  startTime   DateTime?
+  endTime     DateTime?
+  status      AssessmentStatus @default(DRAFT)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  course     Course @relation(fields: [courseId], references: [id])
+  courseId   String
+
+  lecturer   User   @relation(fields: [lecturerId], references: [id])
+  lecturerId String
+
+  questions   Question[]
+  submissions Submission[]
+}
+
+model Question {
+  id          String       @id @default(cuid())
+  text        String
+  type        QuestionType
+  marks       Int
+  order       Int
+  modelAnswer String?
+  createdAt   DateTime     @default(now())
+
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  assessmentId String
+
+  options  Option[]
+  keywords GradingKeyword[]
+  answers  Answer[]
+}
+
+model Option {
+  id        String  @id @default(cuid())
+  label     String
+  text      String
+  isCorrect Boolean @default(false)
+
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId String
+}
+
+model GradingKeyword {
+  id      String @id @default(cuid())
+  keyword String
+  weight  Float
+
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId String
+}
+
+model Submission {
+  id          String           @id @default(cuid())
+  startedAt   DateTime         @default(now())
+  submittedAt DateTime?
+  status      SubmissionStatus @default(IN_PROGRESS)
+
+  student    User   @relation(fields: [studentId], references: [id])
+  studentId  String
+
+  assessment   Assessment @relation(fields: [assessmentId], references: [id])
+  assessmentId String
+
+  answers Answer[]
+  result  Result?
+
+  @@unique([studentId, assessmentId])
+}
+
+model Answer {
+  id             String    @id @default(cuid())
+  answerText     String?
+  selectedOption String?
+  marksAwarded   Float?
+  aiFeedback     String?
+  aiConfidence   Float?
+  gradedAt       DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  submissionId String
+
+  question   Question @relation(fields: [questionId], references: [id])
+  questionId String
+
+  @@unique([submissionId, questionId])
+}
+
+model Result {
+  id              String   @id @default(cuid())
+  totalMarks      Float
+  objectiveMarks  Float
+  subjectiveMarks Float
+  grade           String
+  createdAt       DateTime @default(now())
+
+  submission   Submission @relation(fields: [submissionId], references: [id])
+  submissionId String     @unique
+}
