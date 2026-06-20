@@ -145,7 +145,7 @@ export default async function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {recentAssessments.map((a, i) => (
+                {recentAssessments.map((a: (typeof recentAssessments)[number], i) => (
                   <tr
                     key={a.id}
                     className={`border-b border-slate-50 transition-colors hover:bg-slate-50/80 ${
