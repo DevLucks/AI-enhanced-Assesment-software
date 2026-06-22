@@ -48,7 +48,7 @@ export default async function ResultReviewPage({
       : 0;
 
   return (
-    <div className="flex flex-col flex-1 bg-[#F8FAFC] min-h-screen">
+    <div className="flex flex-col flex-1 bg-[#F8FAFC]">
       <Header
         title="Answer Review"
         subtitle={`${assessment.title} · ${assessment.course.code}`}

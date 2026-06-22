@@ -39,7 +39,7 @@ export default async function LecturerAssessmentsPage() {
   };
 
   return (
-    <div className="flex flex-col flex-1 bg-slate-50 min-h-screen">
+    <div className="flex flex-col flex-1 bg-slate-50">
       <Header
         title="My Assessments"
         subtitle="Manage and monitor all your assessments"

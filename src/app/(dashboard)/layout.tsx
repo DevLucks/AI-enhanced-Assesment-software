@@ -20,7 +20,7 @@ export default async function DashboardLayout({
       <MobileNav />
 
       {/* Main content — offset on desktop, padded top+bottom on mobile for nav bars */}
-      <div className="flex-1 flex flex-col min-h-screen lg:ml-[280px] pt-14 lg:pt-0 pb-16 lg:pb-0">
+      <div className="flex-1 flex flex-col lg:ml-[280px] pt-14 lg:pt-0 pb-16 lg:pb-0">
         {children}
       </div>
     </div>

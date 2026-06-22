@@ -63,7 +63,7 @@ export default async function AssessmentResultsPage({ params }: Props) {
   };
 
   return (
-    <div className="flex flex-col flex-1 bg-slate-50 min-h-screen">
+    <div className="flex flex-col flex-1 bg-slate-50">
       <Header
         title={assessment.title}
         subtitle={`${assessment.course.code} · ${assessment.course.name}`}

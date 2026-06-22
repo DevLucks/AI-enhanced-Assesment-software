@@ -50,7 +50,7 @@ export default async function StudentDashboard() {
   };
 
   return (
-    <div className="flex flex-col flex-1 bg-[#F8FAFC] min-h-screen">
+    <div className="flex flex-col flex-1 bg-[#F8FAFC]">
       <Header
         title="Student Dashboard"
         subtitle={`Welcome back, ${studentName}`}

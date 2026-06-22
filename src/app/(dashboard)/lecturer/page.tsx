@@ -53,7 +53,7 @@ export default async function LecturerDashboard() {
   const activeCount = assessments.filter((a) => a.status === "ACTIVE").length;
 
   return (
-    <div className="flex flex-col flex-1 bg-slate-50 min-h-screen">
+    <div className="flex flex-col flex-1 bg-slate-50">
       <Header
         title="Lecturer Dashboard"
         subtitle={`Welcome back, ${session?.user?.name ?? "Lecturer"}`}

@@ -47,7 +47,7 @@ export default async function StudentResultsPage() {
       : 0;
 
   return (
-    <div className="flex flex-col flex-1 bg-[#F8FAFC] min-h-screen">
+    <div className="flex flex-col flex-1 bg-[#F8FAFC]">
       <Header
         title="My Results"
         subtitle="View all your assessment grades and feedback"

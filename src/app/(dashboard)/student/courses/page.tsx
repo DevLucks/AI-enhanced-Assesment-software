@@ -93,7 +93,7 @@ export default function StudentCoursesPage() {
   const available = filtered.filter((c) => !c.enrolled);
 
   return (
-    <div className="flex flex-col flex-1 bg-[#F8FAFC] min-h-screen">
+    <div className="flex flex-col flex-1 bg-[#F8FAFC]">
       <Header title="My Courses" subtitle="Browse and manage your course enrolments" />
       <main className="flex-1 p-4 lg:p-8 space-y-8">
         {/* Search bar */}

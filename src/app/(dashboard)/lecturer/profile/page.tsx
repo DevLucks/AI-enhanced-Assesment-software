@@ -28,7 +28,7 @@ export default async function LecturerProfilePage() {
     .toUpperCase();
 
   return (
-    <div className="flex flex-col flex-1 bg-slate-50 min-h-screen">
+    <div className="flex flex-col flex-1 bg-slate-50">
       <Header title="My Profile" subtitle="Manage your account and settings" />
 
       <main className="flex-1 p-6 lg:p-8">

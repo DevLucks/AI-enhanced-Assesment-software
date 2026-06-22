@@ -23,7 +23,7 @@ export default async function StudentProfilePage() {
     .toUpperCase();
 
   return (
-    <div className="flex flex-col flex-1 bg-[#F8FAFC] min-h-screen">
+    <div className="flex flex-col flex-1 bg-[#F8FAFC]">
       <Header title="My Profile" subtitle="Manage your account settings" />
       <main className="flex-1 p-4 lg:p-8">
         <div className="max-w-3xl mx-auto space-y-6">

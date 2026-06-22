@@ -120,7 +120,7 @@ export default async function NotificationsPage() {
   }
 
   return (
-    <div className="flex flex-col flex-1 bg-[#F8FAFC] min-h-screen">
+    <div className="flex flex-col flex-1 bg-[#F8FAFC]">
       <Header
         title="Notifications"
         subtitle="Assessment updates and result announcements"

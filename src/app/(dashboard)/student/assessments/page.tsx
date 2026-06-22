@@ -40,7 +40,7 @@ export default async function StudentAssessmentsPage() {
   };
 
   return (
-    <div className="flex flex-col flex-1 bg-[#F8FAFC] min-h-screen">
+    <div className="flex flex-col flex-1 bg-[#F8FAFC]">
       <Header
         title="My Assessments"
         subtitle="All available and completed assessments"

@@ -204,7 +204,7 @@ export default function CreateAssessmentPage() {
   const totalQuestionMarks = questions.reduce((sum, q) => sum + q.marks, 0);
 
   return (
-    <div className="flex flex-col flex-1 bg-slate-50 min-h-screen">
+    <div className="flex flex-col flex-1 bg-slate-50">
       <Header
         title="Create Assessment"
         subtitle="Build and configure a new assessment in 3 steps"
