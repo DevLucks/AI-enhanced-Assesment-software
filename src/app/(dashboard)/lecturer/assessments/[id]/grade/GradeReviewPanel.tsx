@@ -27,6 +27,7 @@ interface Answer {
     type: string;
     marks: number;
     modelAnswer: string | null;
+    options: { id: string; label: string; text: string; isCorrect: boolean }[];
   };
 }
 
@@ -350,14 +351,24 @@ export default function GradeReviewPanel({
             <p className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">
               Student Answer
             </p>
-            <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">
-              {selectedAnswer.answerText ??
-                selectedAnswer.selectedOption ?? (
-                  <span className="text-slate-300 italic">
-                    No answer provided
-                  </span>
+            {selectedAnswer.question.type === "OBJECTIVE" ? (() => {
+              const chosen = selectedAnswer.question.options.find(
+                (o) => o.id === selectedAnswer.selectedOption
+              );
+              return chosen ? (
+                <p className="text-sm text-slate-700 leading-relaxed">
+                  <span className="font-bold">{chosen.label}.</span> {chosen.text}
+                </p>
+              ) : (
+                <span className="text-sm text-slate-300 italic">No answer provided</span>
+              );
+            })() : (
+              <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">
+                {selectedAnswer.answerText ?? (
+                  <span className="text-slate-300 italic">No answer provided</span>
                 )}
-            </p>
+              </p>
+            )}
           </div>
 
           {/* AI Analysis */}

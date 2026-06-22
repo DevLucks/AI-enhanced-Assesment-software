@@ -23,7 +23,11 @@ export default async function AIGradingPage({ params }: Props) {
           student: { select: { name: true, matricNumber: true } },
           result: true,
           answers: {
-            include: { question: true },
+            include: {
+              question: {
+                include: { options: { select: { id: true, label: true, text: true, isCorrect: true } } },
+              },
+            },
             orderBy: { question: { order: "asc" } },
           },
         },
