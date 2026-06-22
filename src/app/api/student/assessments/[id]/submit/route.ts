@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { gradeSubjectiveAnswer } from "@/lib/gemini";
 import { z } from "zod";
 
 const answerSchema = z.object({
@@ -62,6 +63,7 @@ export async function POST(
       },
       include: {
         options: { select: { id: true, isCorrect: true } },
+        keywords: true,
       },
     });
 
@@ -99,32 +101,87 @@ export async function POST(
       };
     });
 
-    const grade = computeGrade(objectiveMarks, assessment.totalMarks);
-
     await prisma.$transaction(async (tx) => {
       await tx.answer.createMany({ data: answerData, skipDuplicates: true });
-
       await tx.submission.update({
         where: { id: submissionId },
         data: { status: "SUBMITTED", submittedAt: new Date() },
       });
-
       await tx.result.create({
         data: {
           submissionId,
           totalMarks: objectiveMarks,
           objectiveMarks,
           subjectiveMarks: 0,
-          grade,
+          grade: computeGrade(objectiveMarks, assessment.totalMarks),
         },
       });
     });
+
+    // Grade subjective (essay) answers with Gemini
+    const subjectiveAnswers = answers.filter((a) => {
+      const q = questionMap.get(a.questionId);
+      return q?.type === "SUBJECTIVE";
+    });
+
+    let subjectiveMarks = 0;
+
+    if (subjectiveAnswers.length > 0) {
+      const gradingResults = await Promise.allSettled(
+        subjectiveAnswers.map(async (a) => {
+          const question = questionMap.get(a.questionId)!;
+
+          if (!a.answerText) {
+            await prisma.answer.updateMany({
+              where: { submissionId, questionId: question.id },
+              data: { marksAwarded: 0, aiFeedback: "No answer provided.", aiConfidence: 1, gradedAt: new Date() },
+            });
+            return 0;
+          }
+
+          const result = await gradeSubjectiveAnswer(
+            question.text,
+            question.modelAnswer ?? "",
+            a.answerText,
+            question.keywords,
+            question.marks
+          );
+
+          await prisma.answer.updateMany({
+            where: { submissionId, questionId: question.id },
+            data: {
+              marksAwarded: result.score,
+              aiFeedback: result.feedback,
+              aiConfidence: result.confidence,
+              gradedAt: new Date(),
+            },
+          });
+
+          return result.score;
+        })
+      );
+
+      subjectiveMarks = gradingResults.reduce((sum, r) => {
+        return r.status === "fulfilled" ? sum + r.value : sum;
+      }, 0);
+
+      const totalMarks = objectiveMarks + subjectiveMarks;
+      await prisma.result.update({
+        where: { submissionId },
+        data: {
+          subjectiveMarks,
+          totalMarks,
+          grade: computeGrade(totalMarks, assessment.totalMarks),
+        },
+      });
+    }
 
     return Response.json({
       success: true,
       submissionId,
       objectiveMarks,
-      totalMarks: assessment.totalMarks,
+      subjectiveMarks,
+      totalMarks: objectiveMarks + subjectiveMarks,
     });
   } catch {
     return Response.json({ error: "Internal server error" }, { status: 500 });

@@ -6,6 +6,7 @@ import { z } from "zod";
 const schema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
+  phone: z.string().optional(),
   idNumber: z.string().min(1),
   role: z.literal("STUDENT"),
   password: z.string().min(6),
@@ -19,7 +20,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid input." }, { status: 400 });
     }
 
-    const { name, email, idNumber, role, password } = parsed.data;
+    const { name, email, phone, idNumber, role, password } = parsed.data;
 
     const existing = await prisma.user.findFirst({
       where: {
@@ -41,6 +42,7 @@ export async function POST(req: NextRequest) {
         email,
         password: hashed,
         role,
+        phone: phone || null,
         ...(role === "STUDENT" ? { matricNumber: idNumber } : { staffId: idNumber }),
       },
     });

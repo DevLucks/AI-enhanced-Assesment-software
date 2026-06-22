@@ -38,7 +38,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
           script: |
-            cd /var/www/eduassess
+            cd /home/dev/mjay-final-year-project/AI-enhanced-Assesment-software
 
             # Pull latest code
             git pull origin main

@@ -4,7 +4,7 @@ import Header from "@/components/layout/Header";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 import StudentProfileForm from "./StudentProfileForm";
-import { BookOpen, Mail, Hash, GraduationCap } from "lucide-react";
+import { BookOpen, Mail, Hash, GraduationCap, Phone } from "lucide-react";
 
 export default async function StudentProfilePage() {
   const session = await auth();
@@ -97,6 +97,18 @@ export default async function StudentProfilePage() {
                   </div>
                 </div>
               )}
+
+              {user.phone && (
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-slate-50 text-slate-500">
+                    <Phone size={15} />
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-400 font-medium">Phone</p>
+                    <p className="text-sm text-slate-700 font-medium">{user.phone}</p>
+                  </div>
+                </div>
+              )}
             </div>
           </Card>
 
@@ -105,6 +117,7 @@ export default async function StudentProfilePage() {
             userId={user.id}
             name={user.name}
             email={user.email}
+            phone={user.phone}
           />
 
           {/* Enrolled Courses */}

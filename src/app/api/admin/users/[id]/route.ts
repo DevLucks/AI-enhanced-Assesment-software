@@ -11,6 +11,14 @@ const updateUserSchema = z.object({
   departmentId: z.string().nullable().optional(),
   matricNumber: z.string().nullable().optional(),
   staffId: z.string().nullable().optional(),
+  phone: z.string().nullable().optional(),
+});
+
+const selfUpdateSchema = z.object({
+  name: z.string().min(1).optional(),
+  phone: z.string().nullable().optional(),
+  currentPassword: z.string().optional(),
+  newPassword: z.string().min(6).optional(),
 });
 
 const userSelect = {
@@ -20,6 +28,7 @@ const userSelect = {
   role: true,
   matricNumber: true,
   staffId: true,
+  phone: true,
   departmentId: true,
   createdAt: true,
   updatedAt: true,
@@ -81,6 +90,51 @@ export async function PUT(
 
     return Response.json(user);
   } catch (error) {
+    return Response.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
+
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await auth();
+    if (!session?.user) return Response.json({ error: "Unauthorized" }, { status: 401 });
+
+    const { id } = await params;
+
+    // Users can only update their own profile via PATCH
+    if (session.user.id !== id) return Response.json({ error: "Forbidden" }, { status: 403 });
+
+    const body = await request.json();
+    const parsed = selfUpdateSchema.safeParse(body);
+    if (!parsed.success) {
+      return Response.json({ error: "Invalid input", details: parsed.error.flatten() }, { status: 400 });
+    }
+
+    const { currentPassword, newPassword, ...rest } = parsed.data;
+    const data: Record<string, unknown> = { ...rest };
+
+    if (newPassword) {
+      if (!currentPassword) {
+        return Response.json({ error: "Current password is required." }, { status: 400 });
+      }
+      const user = await prisma.user.findUnique({ where: { id } });
+      if (!user) return Response.json({ error: "User not found" }, { status: 404 });
+      const valid = await bcrypt.compare(currentPassword, user.password);
+      if (!valid) return Response.json({ error: "Current password is incorrect." }, { status: 400 });
+      data.password = await bcrypt.hash(newPassword, 12);
+    }
+
+    const updated = await prisma.user.update({
+      where: { id },
+      data,
+      select: userSelect,
+    });
+
+    return Response.json(updated);
+  } catch {
     return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }

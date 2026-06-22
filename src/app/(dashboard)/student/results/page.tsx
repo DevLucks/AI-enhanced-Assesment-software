@@ -1,9 +1,10 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import Link from "next/link";
 import Header from "@/components/layout/Header";
 import { GradeCircle } from "@/components/ui/Badge";
 import { StatCard } from "@/components/ui/Card";
-import { FileText, TrendingUp, Award, BarChart2 } from "lucide-react";
+import { FileText, TrendingUp, Award, BarChart2, ClipboardList } from "lucide-react";
 
 export default async function StudentResultsPage() {
   const session = await auth();
@@ -178,6 +179,17 @@ export default async function StudentResultsPage() {
                         style={{ width: `${pct}%` }}
                       />
                     </div>
+                  </div>
+
+                  {/* Review link */}
+                  <div className="mt-4 pt-4 border-t border-slate-100">
+                    <Link
+                      href={`/student/results/${r.id}`}
+                      className="inline-flex items-center gap-1.5 text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors"
+                    >
+                      <ClipboardList size={15} />
+                      Review Answers
+                    </Link>
                   </div>
                 </div>
               );

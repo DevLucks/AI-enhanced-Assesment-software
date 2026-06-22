@@ -100,7 +100,7 @@ export default async function AssessmentResultsPage({ params }: Props) {
 
             {/* Right: actions */}
             <div className="flex flex-wrap items-center gap-2">
-              {assessment.status === "CLOSED" && graded.length > 0 && (
+              {graded.length > 0 && (
                 <Link href={`/lecturer/assessments/${id}/grade`}>
                   <Button size="sm" variant="secondary">
                     <Star size={14} />
@@ -216,7 +216,7 @@ export default async function AssessmentResultsPage({ params }: Props) {
                 {submitted.length} of {assessment.submissions.length} submitted
               </p>
             </div>
-            {assessment.status === "CLOSED" && graded.length > 0 && (
+              {graded.length > 0 && (
               <Link href={`/lecturer/assessments/${id}/grade`}>
                 <Button size="sm" variant="secondary">
                   <Star size={13} />
@@ -251,17 +251,23 @@ export default async function AssessmentResultsPage({ params }: Props) {
               {assessment.submissions.map((s) => (
                 <tr key={s.id} className="hover:bg-slate-50/70 transition-colors">
                   <td className="px-6 py-3.5 font-medium text-slate-900">
-                    {s.student.name}
+                    {s.result ? (
+                      <Link
+                        href={`/lecturer/assessments/${id}/grade`}
+                        className="flex items-center gap-1.5 text-indigo-600 hover:text-indigo-800 hover:underline"
+                      >
+                        {s.student.name}
+                        <ChevronRight size={13} />
+                      </Link>
+                    ) : (
+                      s.student.name
+                    )}
                   </td>
                   <td className="px-6 py-3.5 font-mono text-xs text-slate-400">
                     {s.student.matricNumber ?? "—"}
                   </td>
                   <td className="px-6 py-3.5">
-                    <Badge
-                      variant={
-                        s.status === "SUBMITTED" ? "success" : "warning"
-                      }
-                    >
+                    <Badge variant={s.status === "SUBMITTED" ? "success" : "warning"}>
                       {s.status}
                     </Badge>
                   </td>

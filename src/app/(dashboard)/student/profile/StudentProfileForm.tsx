@@ -3,19 +3,22 @@ import { useState } from "react";
 import Card from "@/components/ui/Card";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
-import { CheckCircle, AlertCircle, KeyRound, User } from "lucide-react";
+import { CheckCircle, AlertCircle, KeyRound, User, Phone } from "lucide-react";
 
 export default function StudentProfileForm({
   userId,
   name,
   email,
+  phone,
 }: {
   userId: string;
   name: string;
   email: string;
+  phone?: string | null;
 }) {
   const [form, setForm] = useState({
     name,
+    phone: phone ?? "",
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
@@ -45,7 +48,7 @@ export default function StudentProfileForm({
 
     setSaving(true);
     try {
-      const body: Record<string, string> = { name: form.name };
+      const body: Record<string, string> = { name: form.name, phone: form.phone };
       if (form.newPassword) {
         body.currentPassword = form.currentPassword;
         body.newPassword = form.newPassword;
@@ -116,6 +119,13 @@ export default function StudentProfileForm({
             value={email}
             disabled
             placeholder="Email"
+          />
+          <Input
+            label="Phone Number"
+            value={form.phone}
+            onChange={set("phone")}
+            placeholder="e.g. 08012345678"
+            icon={<Phone size={14} />}
           />
         </div>
 

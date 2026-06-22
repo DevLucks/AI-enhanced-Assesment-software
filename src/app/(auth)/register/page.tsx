@@ -8,6 +8,7 @@ import {
   Mail,
   Hash,
   Lock,
+  Phone,
   AlertCircle,
   CheckCircle,
   Eye,
@@ -22,6 +23,7 @@ export default function RegisterPage() {
   const [form, setForm] = useState({
     name: "",
     email: "",
+    phone: "",
     idNumber: "",
     password: "",
     confirmPassword: "",
@@ -74,6 +76,7 @@ export default function RegisterPage() {
         body: JSON.stringify({
           name: form.name,
           email: form.email,
+          phone: form.phone,
           idNumber: form.idNumber,
           role: "STUDENT",
           password: form.password,
@@ -154,6 +157,16 @@ export default function RegisterPage() {
           icon={<Mail size={15} />}
           autoComplete="email"
           required
+        />
+
+        <Input
+          label="Phone Number"
+          type="tel"
+          placeholder="e.g. 08012345678"
+          value={form.phone}
+          onChange={(e) => set("phone", e.target.value)}
+          icon={<Phone size={15} />}
+          autoComplete="tel"
         />
 
         {/* ID field */}

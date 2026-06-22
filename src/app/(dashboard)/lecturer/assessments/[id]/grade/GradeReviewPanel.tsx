@@ -12,6 +12,7 @@ import {
   Users,
   AlertTriangle,
   Send,
+  Sparkles,
 } from "lucide-react";
 
 interface Answer {
@@ -58,6 +59,7 @@ export default function GradeReviewPanel({
   const [note, setNote] = useState("");
   const [saving, setSaving] = useState(false);
   const [publishing, setPublishing] = useState(false);
+  const [grading, setGrading] = useState(false);
   const [savedMsg, setSavedMsg] = useState("");
 
   function selectStudent(s: Submission) {
@@ -114,6 +116,27 @@ export default function GradeReviewPanel({
       router.refresh();
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleRunGrading() {
+    if (!selected) return;
+    setGrading(true);
+    setSavedMsg("");
+    try {
+      const res = await fetch(`/api/grading`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ submissionId: selected.id }),
+      });
+      if (res.ok) {
+        setSavedMsg("AI grading complete. Refreshing...");
+        router.refresh();
+      } else {
+        setSavedMsg("AI grading failed. Check logs.");
+      }
+    } finally {
+      setGrading(false);
     }
   }
 
@@ -228,14 +251,26 @@ export default function GradeReviewPanel({
         <div className="w-full lg:w-64 flex-shrink-0 border-b lg:border-b-0 lg:border-r border-slate-200 bg-slate-50 flex flex-col overflow-hidden">
           {/* Header */}
           <div className="px-4 py-3.5 border-b border-slate-100 bg-white flex-shrink-0">
-            <p className="text-xs font-bold text-slate-600 uppercase tracking-wide">
-              {selected.student.name}&apos;s Answers
-            </p>
-            {selected.result && (
-              <p className="text-xs text-slate-400 mt-0.5">
-                Total: {selected.result.totalMarks.toFixed(1)} pts
-              </p>
-            )}
+            <div className="flex items-center justify-between gap-2">
+              <div>
+                <p className="text-xs font-bold text-slate-600 uppercase tracking-wide">
+                  {selected.student.name}&apos;s Answers
+                </p>
+                {selected.result && (
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Total: {selected.result.totalMarks.toFixed(1)} pts
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={handleRunGrading}
+                disabled={grading}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-xs font-semibold transition-colors disabled:opacity-50 shrink-0"
+              >
+                <Sparkles size={12} />
+                {grading ? "Grading..." : "Run AI"}
+              </button>
+            </div>
           </div>
 
           {/* Answer list */}
