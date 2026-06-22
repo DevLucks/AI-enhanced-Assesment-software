@@ -43,8 +43,8 @@ jobs:
             # Pull latest code
             git pull origin main
 
-            # Install production dependencies
-            npm ci --omit=dev
+            # Install all dependencies (dev deps needed for next build)
+            npm ci
 
             # Run any pending DB migrations (safe — Neon cloud, no downtime)
             npx prisma migrate deploy
