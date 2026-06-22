@@ -13,6 +13,7 @@ import {
   AlertTriangle,
   Send,
   Sparkles,
+  ArrowLeft,
 } from "lucide-react";
 
 interface Answer {
@@ -62,6 +63,7 @@ export default function GradeReviewPanel({
   const [publishing, setPublishing] = useState(false);
   const [grading, setGrading] = useState(false);
   const [savedMsg, setSavedMsg] = useState("");
+  const [mobileStep, setMobileStep] = useState<"students" | "answers" | "review">("students");
 
   function selectStudent(s: Submission) {
     setSelected(s);
@@ -69,6 +71,7 @@ export default function GradeReviewPanel({
     setOverride("");
     setNote("");
     setSavedMsg("");
+    setMobileStep("answers");
   }
 
   function selectAnswer(a: Answer) {
@@ -76,6 +79,7 @@ export default function GradeReviewPanel({
     setOverride("");
     setNote("");
     setSavedMsg("");
+    setMobileStep("review");
   }
 
   async function handleOverride() {
@@ -175,11 +179,13 @@ export default function GradeReviewPanel({
       : "bg-red-50";
 
   return (
-    <div className="flex flex-1 overflow-hidden flex-col lg:flex-row">
+    <div className="flex flex-1 overflow-hidden flex-row">
       {/* ============================================================
           LEFT PANEL — Student List
       ============================================================ */}
-      <aside className="w-full lg:w-64 flex-shrink-0 border-b lg:border-b-0 lg:border-r border-slate-200 bg-white flex flex-col overflow-hidden">
+      <aside className={`flex-shrink-0 border-r border-slate-200 bg-white flex flex-col overflow-hidden
+        ${mobileStep === "students" ? "flex" : "hidden"} lg:flex
+        w-full lg:w-64`}>
         {/* Header */}
         <div className="px-4 py-3.5 border-b border-slate-100 bg-slate-50 flex-shrink-0">
           <div className="flex items-center gap-2">
@@ -191,6 +197,7 @@ export default function GradeReviewPanel({
               {assessment.submissions.length}
             </span>
           </div>
+          <p className="lg:hidden text-xs text-slate-400 mt-1">Tap a student to review their answers</p>
         </div>
 
         {/* Student list */}
@@ -249,9 +256,18 @@ export default function GradeReviewPanel({
           CENTER PANEL — Answers List
       ============================================================ */}
       {selected ? (
-        <div className="w-full lg:w-64 flex-shrink-0 border-b lg:border-b-0 lg:border-r border-slate-200 bg-slate-50 flex flex-col overflow-hidden">
+        <div className={`flex-shrink-0 border-r border-slate-200 bg-slate-50 flex flex-col overflow-hidden
+          ${mobileStep === "answers" ? "flex" : "hidden"} lg:flex
+          w-full lg:w-64`}>
           {/* Header */}
           <div className="px-4 py-3.5 border-b border-slate-100 bg-white flex-shrink-0">
+            {/* Mobile back button */}
+            <button
+              onClick={() => setMobileStep("students")}
+              className="lg:hidden flex items-center gap-1 text-xs text-indigo-600 font-semibold mb-2"
+            >
+              <ArrowLeft size={13} /> All Students
+            </button>
             <div className="flex items-center justify-between gap-2">
               <div>
                 <p className="text-xs font-bold text-slate-600 uppercase tracking-wide">
@@ -335,7 +351,15 @@ export default function GradeReviewPanel({
           RIGHT PANEL — AI Analysis & Override
       ============================================================ */}
       {selectedAnswer ? (
-        <div className="flex-1 overflow-y-auto p-5 lg:p-6 space-y-5">
+        <div className={`flex-1 overflow-y-auto p-5 lg:p-6 space-y-5
+          ${mobileStep === "review" ? "block" : "hidden"} lg:block`}>
+          {/* Mobile back button */}
+          <button
+            onClick={() => setMobileStep("answers")}
+            className="lg:hidden flex items-center gap-1 text-xs text-indigo-600 font-semibold mb-1"
+          >
+            <ArrowLeft size={13} /> {selected?.student.name}&apos;s Answers
+          </button>
           {/* Question */}
           <div>
             <p className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">
@@ -492,7 +516,7 @@ export default function GradeReviewPanel({
           </div>
         </div>
       ) : (
-        <div className="flex-1 flex items-center justify-center bg-slate-50">
+        <div className="hidden lg:flex flex-1 items-center justify-center bg-slate-50">
           <div className="text-center">
             <Brain size={32} className="text-slate-200 mx-auto mb-3" />
             <p className="text-sm text-slate-400 font-medium">
