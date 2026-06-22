@@ -61,6 +61,7 @@ export default function GradeReviewPanel({
   const [note, setNote] = useState("");
   const [saving, setSaving] = useState(false);
   const [publishing, setPublishing] = useState(false);
+  const [publishMsg, setPublishMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [grading, setGrading] = useState(false);
   const [savedMsg, setSavedMsg] = useState("");
   const [mobileStep, setMobileStep] = useState<"students" | "answers" | "review">("students");
@@ -147,13 +148,20 @@ export default function GradeReviewPanel({
 
   async function handlePublish() {
     setPublishing(true);
+    setPublishMsg(null);
     try {
-      await fetch(`/api/lecturer/assessments/${assessment.id}/publish`, {
+      const res = await fetch(`/api/lecturer/assessments/${assessment.id}/finalize`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "publish-results" }),
       });
-      router.refresh();
+      const data = await res.json();
+      if (res.ok) {
+        setPublishMsg({ type: "success", text: "Results finalized. Assessment is now closed." });
+        router.refresh();
+      } else {
+        setPublishMsg({ type: "error", text: data.error ?? "Failed to finalize results." });
+      }
+    } catch {
+      setPublishMsg({ type: "error", text: "Network error. Please try again." });
     } finally {
       setPublishing(false);
     }
@@ -238,8 +246,8 @@ export default function GradeReviewPanel({
           )}
         </div>
 
-        {/* Publish All Results */}
-        <div className="p-3 border-t border-slate-100 bg-white flex-shrink-0">
+        {/* Finalize Results */}
+        <div className="p-3 border-t border-slate-100 bg-white flex-shrink-0 space-y-2">
           <Button
             className="w-full"
             size="sm"
@@ -249,6 +257,15 @@ export default function GradeReviewPanel({
             <Send size={13} />
             Publish All Results
           </Button>
+          {publishMsg && (
+            <p className={`text-xs px-2 py-1.5 rounded-lg text-center font-medium ${
+              publishMsg.type === "success"
+                ? "bg-emerald-50 text-emerald-700"
+                : "bg-red-50 text-red-700"
+            }`}>
+              {publishMsg.text}
+            </p>
+          )}
         </div>
       </aside>
 
