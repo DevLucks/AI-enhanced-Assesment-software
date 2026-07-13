@@ -26,14 +26,17 @@ jobs:
           port: 22
           script: |
             if [ "${{ inputs.action }}" = "down" ]; then
-              # Block public access first (insert before the existing allow rule)
-              ufw insert 1 deny 8080
+              # Remove the allow rule, then explicitly deny the port
+              # (ufw refuses to insert deny while an allow with the same spec exists)
+              ufw delete allow 8080 || true
+              ufw deny 8080
               # Stop the app and persist so a reboot doesn't bring it back
               pm2 stop eduassess
               pm2 save
               echo "Site is DOWN: port 8080 blocked, eduassess stopped."
             else
-              ufw delete deny 8080
+              ufw delete deny 8080 || true
+              ufw allow 8080
               pm2 restart eduassess
               pm2 save
               echo "Site is UP: port 8080 open, eduassess running."
