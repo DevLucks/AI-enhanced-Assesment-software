@@ -19,12 +19,14 @@ import {
   ClipboardList,
   GraduationCap,
   UserCheck,
+  Layers,
 } from "lucide-react";
 
 interface Course {
   id: string;
   name: string;
   code: string;
+  units: number;
   departmentId: string;
   department: { name: string };
   lecturers?: { id: string; name: string; email: string }[];
@@ -47,7 +49,7 @@ export default function CoursesPage() {
   // create/edit modal
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Course | null>(null);
-  const [form, setForm] = useState({ name: "", code: "", departmentId: "" });
+  const [form, setForm] = useState({ name: "", code: "", departmentId: "", units: "3" });
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -83,14 +85,14 @@ export default function CoursesPage() {
 
   function openCreate() {
     setEditing(null);
-    setForm({ name: "", code: "", departmentId: "" });
+    setForm({ name: "", code: "", departmentId: "", units: "3" });
     setFormError("");
     setShowForm(true);
   }
 
   function openEdit(c: Course) {
     setEditing(c);
-    setForm({ name: c.name, code: c.code, departmentId: c.departmentId });
+    setForm({ name: c.name, code: c.code, departmentId: c.departmentId, units: String(c.units) });
     setFormError("");
     setShowForm(true);
   }
@@ -109,6 +111,7 @@ export default function CoursesPage() {
           name: form.name,
           code: form.code,
           departmentId: form.departmentId || undefined,
+          units: Number(form.units),
         }),
       });
       if (!res.ok) {
@@ -278,13 +281,25 @@ export default function CoursesPage() {
                   onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                   required
                 />
-                <Input
-                  label="Course Code"
-                  placeholder="e.g. CS-402"
-                  value={form.code}
-                  onChange={(e) => setForm((f) => ({ ...f, code: e.target.value.toUpperCase() }))}
-                  required
-                />
+                <div className="grid grid-cols-2 gap-3">
+                  <Input
+                    label="Course Code"
+                    placeholder="e.g. CS-402"
+                    value={form.code}
+                    onChange={(e) => setForm((f) => ({ ...f, code: e.target.value.toUpperCase() }))}
+                    required
+                  />
+                  <Input
+                    label="Units"
+                    type="number"
+                    min={1}
+                    max={10}
+                    placeholder="e.g. 3"
+                    value={form.units}
+                    onChange={(e) => setForm((f) => ({ ...f, units: e.target.value }))}
+                    required
+                  />
+                </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Department</label>
                   <select
@@ -492,11 +507,17 @@ export default function CoursesPage() {
                   </div>
                 </div>
 
-                <div className="mt-3">
+                <div className="mt-3 flex items-center gap-2 flex-wrap">
                   <Badge variant="primary">{c.department.name}</Badge>
+                  <Badge variant="neutral">{c.units} unit{c.units !== 1 ? "s" : ""}</Badge>
                 </div>
 
-                <div className="mt-4 pt-4 border-t border-slate-50 grid grid-cols-3 gap-2 text-xs">
+                <div className="mt-4 pt-4 border-t border-slate-50 grid grid-cols-4 gap-2 text-xs">
+                  <div className="flex flex-col items-center gap-0.5 p-2 rounded-lg bg-slate-50">
+                    <Layers size={12} className="text-amber-400" />
+                    <span className="font-semibold text-slate-700">{c.units}</span>
+                    <span className="text-slate-400">Units</span>
+                  </div>
                   <div className="flex flex-col items-center gap-0.5 p-2 rounded-lg bg-slate-50">
                     <GraduationCap size={12} className="text-violet-400" />
                     <span className="font-semibold text-slate-700">{c._count?.students ?? 0}</span>

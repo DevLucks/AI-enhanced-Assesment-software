@@ -6,6 +6,7 @@ const createCourseSchema = z.object({
   name: z.string().min(1),
   code: z.string().min(1),
   departmentId: z.string().min(1),
+  units: z.coerce.number().int().min(1).max(10).optional(),
 });
 
 export async function GET() {

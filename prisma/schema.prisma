@@ -95,6 +95,7 @@ model Course {
   id        String   @id @default(cuid())
   name      String
   code      String   @unique
+  units     Int      @default(3)
   createdAt DateTime @default(now())
 
   department   Department @relation(fields: [departmentId], references: [id])

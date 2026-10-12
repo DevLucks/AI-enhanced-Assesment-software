@@ -6,6 +6,7 @@ const updateCourseSchema = z.object({
   name: z.string().min(1).optional(),
   code: z.string().min(1).optional(),
   departmentId: z.string().optional(),
+  units: z.coerce.number().int().min(1).max(10).optional(),
   lecturerIds: z.array(z.string()).optional(),
   studentIds: z.array(z.string()).optional(),
 });

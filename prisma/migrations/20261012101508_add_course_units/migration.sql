@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Course" ADD COLUMN     "units" INTEGER NOT NULL DEFAULT 3;

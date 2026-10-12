@@ -17,6 +17,7 @@ interface Course {
   id: string;
   name: string;
   code: string;
+  units: number;
   enrolled: boolean;
   department: { name: string };
   lecturers: { name: string }[];
@@ -251,7 +252,10 @@ function CourseCard({
 
       {/* Department badge + lecturer */}
       <div className="flex flex-col gap-1.5 items-start">
-        <Badge variant="primary">{course.department.name}</Badge>
+        <div className="flex items-center gap-1.5">
+          <Badge variant="primary">{course.department.name}</Badge>
+          <Badge variant="neutral">{course.units} unit{course.units !== 1 ? "s" : ""}</Badge>
+        </div>
         {course.lecturers.length > 0 && (
           <p className="text-xs text-slate-500 truncate">
             {course.lecturers.map((l) => l.name).join(", ")}
