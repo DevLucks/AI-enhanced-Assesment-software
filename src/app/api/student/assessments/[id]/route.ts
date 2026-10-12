@@ -40,6 +40,14 @@ export async function GET(
 
     if (!assessment) return Response.json({ error: "Assessment not found" }, { status: 404 });
 
+    const now = new Date();
+    if (assessment.startTime && now < assessment.startTime) {
+      return Response.json({ error: "Assessment not found" }, { status: 404 });
+    }
+    if (assessment.endTime && now > assessment.endTime) {
+      return Response.json({ error: "Assessment not found" }, { status: 404 });
+    }
+
     const sanitized = {
       ...assessment,
       questions: assessment.questions.map((q) => ({

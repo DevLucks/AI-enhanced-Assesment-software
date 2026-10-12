@@ -35,7 +35,9 @@ export default async function StudentDashboard() {
       }),
       prisma.submission.count({ where: { studentId } }),
       prisma.result.findMany({
-        where: { submission: { studentId } },
+        where: {
+          submission: { studentId, assessment: { resultsPublished: true } },
+        },
         include: {
           submission: { include: { assessment: { include: { course: true } } } },
         },

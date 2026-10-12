@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { gradeSubjectiveAnswer } from "@/lib/gemini";
+import { computeGrade } from "@/lib/grading";
 import { z } from "zod";
 
 const answerSchema = z.object({
@@ -13,15 +14,6 @@ const submitSchema = z.object({
   submissionId: z.string().min(1),
   answers: z.array(answerSchema).min(1),
 });
-
-function computeGrade(scored: number, total: number): string {
-  const pct = total > 0 ? (scored / total) * 100 : 0;
-  if (pct >= 70) return "A";
-  if (pct >= 60) return "B";
-  if (pct >= 50) return "C";
-  if (pct >= 45) return "D";
-  return "F";
-}
 
 export async function POST(
   request: Request,

@@ -34,7 +34,7 @@ export async function POST(
 
     const updated = await prisma.assessment.update({
       where: { id },
-      data: { status: "CLOSED" },
+      data: { status: "CLOSED", resultsPublished: true },
     });
 
     return Response.json({ success: true, status: updated.status });

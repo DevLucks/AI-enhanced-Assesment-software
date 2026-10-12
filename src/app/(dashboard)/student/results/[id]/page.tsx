@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/layout/Header";
 import { GradeCircle } from "@/components/ui/Badge";
-import { CheckCircle2, XCircle, ArrowLeft, Bot, Minus } from "lucide-react";
+import { CheckCircle2, XCircle, ArrowLeft, Minus } from "lucide-react";
 
 export default async function ResultReviewPage({
   params,
@@ -16,7 +16,10 @@ export default async function ResultReviewPage({
   const { id } = await params;
 
   const result = await prisma.result.findFirst({
-    where: { id, submission: { studentId } },
+    where: {
+      id,
+      submission: { studentId, assessment: { resultsPublished: true } },
+    },
     include: {
       submission: {
         include: {
@@ -214,21 +217,6 @@ export default async function ResultReviewPage({
                         <p className="text-xs font-medium text-slate-500 mb-1">Model Answer</p>
                         <div className="bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3 text-sm text-emerald-800 leading-relaxed">
                           {q.modelAnswer}
-                        </div>
-                      </div>
-                    )}
-
-                    {answer?.aiFeedback && (
-                      <div className="flex gap-2.5 bg-indigo-50 border border-indigo-100 rounded-xl px-4 py-3">
-                        <Bot size={16} className="text-indigo-500 flex-shrink-0 mt-0.5" />
-                        <div>
-                          <p className="text-xs font-semibold text-indigo-600 mb-0.5">AI Feedback</p>
-                          <p className="text-sm text-indigo-800 leading-relaxed">{answer.aiFeedback}</p>
-                          {answer.aiConfidence !== null && answer.aiConfidence !== undefined && (
-                            <p className="text-xs text-indigo-400 mt-1">
-                              Confidence: {Math.round(answer.aiConfidence * 100)}%
-                            </p>
-                          )}
                         </div>
                       </div>
                     )}

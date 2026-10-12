@@ -9,7 +9,10 @@ export async function GET() {
 
     const results = await prisma.result.findMany({
       where: {
-        submission: { studentId: session.user.id },
+        submission: {
+          studentId: session.user.id,
+          assessment: { resultsPublished: true },
+        },
       },
       include: {
         submission: {

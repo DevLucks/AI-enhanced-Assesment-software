@@ -134,10 +134,11 @@ export default async function StudentAssessmentsPage() {
           {submitted.length > 0 ? (
             <div className="space-y-3">
               {submitted.map((s) => {
+                const published = s.assessment.resultsPublished ? s.result : null;
                 const pct =
-                  s.assessment.totalMarks > 0 && s.result
+                  s.assessment.totalMarks > 0 && published
                     ? Math.round(
-                        (s.result.totalMarks / s.assessment.totalMarks) * 100
+                        (published.totalMarks / s.assessment.totalMarks) * 100
                       )
                     : null;
                 return (
@@ -172,11 +173,11 @@ export default async function StudentAssessmentsPage() {
 
                     {/* Score / Grade */}
                     <div className="flex-shrink-0 flex items-center gap-3">
-                      {s.result ? (
+                      {published ? (
                         <>
                           <div className="text-right">
                             <p className="text-sm font-bold text-slate-900">
-                              {s.result.totalMarks.toFixed(1)}
+                              {published.totalMarks.toFixed(1)}
                               <span className="text-xs font-normal text-slate-400">
                                 /{s.assessment.totalMarks}
                               </span>
@@ -185,7 +186,7 @@ export default async function StudentAssessmentsPage() {
                               <p className="text-xs text-slate-400">{pct}%</p>
                             )}
                           </div>
-                          <GradeCircle grade={s.result.grade} />
+                          <GradeCircle grade={published.grade} />
                         </>
                       ) : (
                         <Badge variant="warning">Pending</Badge>

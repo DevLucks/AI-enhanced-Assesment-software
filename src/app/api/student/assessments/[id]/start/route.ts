@@ -31,6 +31,14 @@ export async function POST(
       return Response.json({ submissionId: existing.id });
     }
 
+    const now = new Date();
+    if (assessment.startTime && now < assessment.startTime) {
+      return Response.json({ error: "This assessment is not open yet" }, { status: 403 });
+    }
+    if (assessment.endTime && now > assessment.endTime) {
+      return Response.json({ error: "This assessment's window has closed" }, { status: 403 });
+    }
+
     const submission = await prisma.submission.create({
       data: {
         studentId: session.user.id,

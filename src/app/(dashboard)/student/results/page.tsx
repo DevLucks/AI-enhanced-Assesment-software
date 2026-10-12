@@ -11,7 +11,9 @@ export default async function StudentResultsPage() {
   const studentId = session!.user.id;
 
   const results = await prisma.result.findMany({
-    where: { submission: { studentId } },
+    where: {
+      submission: { studentId, assessment: { resultsPublished: true } },
+    },
     include: {
       submission: {
         include: {

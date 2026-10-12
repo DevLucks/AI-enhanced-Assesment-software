@@ -114,6 +114,7 @@ model Assessment {
   startTime   DateTime?
   endTime     DateTime?
   status      AssessmentStatus @default(DRAFT)
+  resultsPublished Boolean     @default(false)
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
 

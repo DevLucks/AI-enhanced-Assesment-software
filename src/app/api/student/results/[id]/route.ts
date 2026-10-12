@@ -15,7 +15,10 @@ export async function GET(
     const result = await prisma.result.findFirst({
       where: {
         id,
-        submission: { studentId: session.user.id },
+        submission: {
+          studentId: session.user.id,
+          assessment: { resultsPublished: true },
+        },
       },
       include: {
         submission: {

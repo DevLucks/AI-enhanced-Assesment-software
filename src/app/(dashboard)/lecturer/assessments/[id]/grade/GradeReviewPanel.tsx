@@ -88,17 +88,23 @@ export default function GradeReviewPanel({
     setSaving(true);
     setSavedMsg("");
     try {
-      await fetch(`/api/lecturer/results`, {
+      const res = await fetch(`/api/lecturer/results`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           answerId: selectedAnswer.id,
           marksAwarded: Number(override),
-          lecturerNote: note,
         }),
       });
-      setSavedMsg("Override saved successfully.");
-      router.refresh();
+      const data = await res.json();
+      if (res.ok) {
+        setSavedMsg("Override saved successfully.");
+        router.refresh();
+      } else {
+        setSavedMsg(data.error ?? "Failed to save override.");
+      }
+    } catch {
+      setSavedMsg("Network error. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -109,17 +115,23 @@ export default function GradeReviewPanel({
     setSaving(true);
     setSavedMsg("");
     try {
-      await fetch(`/api/lecturer/results`, {
+      const res = await fetch(`/api/lecturer/results`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           answerId: selectedAnswer.id,
           marksAwarded: selectedAnswer.marksAwarded,
-          lecturerNote: "AI grade approved by lecturer.",
         }),
       });
-      setSavedMsg("AI grade approved.");
-      router.refresh();
+      const data = await res.json();
+      if (res.ok) {
+        setSavedMsg("AI grade approved.");
+        router.refresh();
+      } else {
+        setSavedMsg(data.error ?? "Failed to approve grade.");
+      }
+    } catch {
+      setSavedMsg("Network error. Please try again.");
     } finally {
       setSaving(false);
     }
