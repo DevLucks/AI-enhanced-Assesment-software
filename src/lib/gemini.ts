@@ -46,11 +46,14 @@ GRADING INSTRUCTIONS:
 - Be strict: vague or irrelevant answers should score low
 - An empty or completely off-topic answer scores 0
 
+This feedback is read by the lecturer reviewing the grade, not the student — write
+about "the student's answer", never "your answer" or second person.
+
 Respond ONLY with valid JSON in this exact format (no markdown, no extra text):
 {
   "score": <number between 0 and ${maxMarks}>,
   "confidence": <number between 0 and 1 representing your confidence in this grade>,
-  "feedback": "<one or two sentences of constructive feedback for the student>"
+  "feedback": "<one or two sentences for the lecturer, describing the student's answer in third person>"
 }`;
 
   const result = await model.generateContent(prompt);
