@@ -92,7 +92,7 @@ export default function LecturersPage() {
 
       if (editing) {
         res = await fetch(`/api/admin/users/${editing.id}`, {
-          method: "PATCH",
+          method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             name: form.name,
