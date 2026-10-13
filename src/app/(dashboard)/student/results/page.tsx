@@ -32,7 +32,7 @@ export default async function StudentResultsPage() {
       : "—";
 
   const bestGrade = results.reduce<string | null>((best, r) => {
-    const order = ["A", "B", "C", "D", "F"];
+    const order = ["A", "B", "C", "D", "E", "F"];
     const letter = r.grade?.[0] ?? "F";
     if (!best) return letter;
     return order.indexOf(letter) < order.indexOf(best) ? letter : best;
@@ -105,6 +105,7 @@ export default async function StudentResultsPage() {
                 B: "from-blue-500 to-blue-400",
                 C: "from-amber-500 to-amber-400",
                 D: "from-orange-500 to-orange-400",
+                E: "from-rose-500 to-rose-400",
                 F: "from-red-500 to-red-400",
               };
               const barColor =

@@ -36,6 +36,7 @@ export function GradeCircle({ grade }: { grade: string }) {
     B: "bg-blue-500",
     C: "bg-amber-500",
     D: "bg-orange-500",
+    E: "bg-rose-500",
     F: "bg-red-500",
   };
 

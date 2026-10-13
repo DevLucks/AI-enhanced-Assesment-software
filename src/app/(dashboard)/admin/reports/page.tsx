@@ -54,6 +54,7 @@ export default async function ReportsPage() {
     B: "from-indigo-500 to-blue-500",
     C: "from-amber-500 to-yellow-500",
     D: "from-orange-500 to-amber-500",
+    E: "from-rose-500 to-pink-500",
     F: "from-red-500 to-rose-500",
   };
 
@@ -109,7 +110,7 @@ export default async function ReportsPage() {
               <BarChart3 size={16} className="text-slate-400" />
             </div>
             <div className="space-y-4">
-              {["A", "B", "C", "D", "F"].map((g) => {
+              {["A", "B", "C", "D", "E", "F"].map((g) => {
                 const count = gradeDist[g] ?? 0;
                 const pct = results.length ? Math.round((count / results.length) * 100) : 0;
                 return (

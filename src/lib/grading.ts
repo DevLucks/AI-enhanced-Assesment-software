@@ -4,5 +4,6 @@ export function computeGrade(scored: number, total: number): string {
   if (pct >= 60) return "B";
   if (pct >= 50) return "C";
   if (pct >= 45) return "D";
+  if (pct >= 40) return "E";
   return "F";
 }
