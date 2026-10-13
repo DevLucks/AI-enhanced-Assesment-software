@@ -104,6 +104,18 @@ export default function ExamClient({ assessment, submissionId }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // If the browser restores this exact page from back/forward cache (e.g. a
+  // student submits, then hits Back), force a real reload so the server's
+  // submission-status check re-runs instead of showing a stale, already-
+  // submitted exam with a freshly-reset timer.
+  useEffect(() => {
+    function onPageShow(e: PageTransitionEvent) {
+      if (e.persisted) window.location.reload();
+    }
+    window.addEventListener("pageshow", onPageShow);
+    return () => window.removeEventListener("pageshow", onPageShow);
+  }, []);
+
   function toggleFlag(qId: string) {
     setFlagged((f) => {
       const n = new Set(f);
